@@ -9,8 +9,6 @@ function preload() {
     game.load.image('ship', 'assets/player.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
     game.load.image('starfield', 'assets/starfield.png');
-    game.load.image('background', 'assets/background2.png');
-
 }
 
 var player;
@@ -67,6 +65,10 @@ function create() {
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
 
+    var urlCoords = readCoordinatesFromUrl().map(function (coordinate) {
+        return "(" + coordinate + ")";
+    });
+    console.log("All coords from URL: " + urlCoords);
     createAliens();
 
     //  The score
@@ -101,7 +103,45 @@ function create() {
     
 }
 
-function createAliens () {
+// Loads dots from query params.
+// Example:
+// http://url?dot_xs=1,2,3&dot_ys=4,5,6
+// represents (1, 4), (2, 5), and (3, 6)
+function readCoordinatesFromUrl() {
+    // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+    var querystring = (function(a) {
+        if (a === "") return {};
+        var b = {};
+        for (var i = 0; i < a.length; ++i) {
+            var p=a[i].split('=', 2);
+            if (p.length == 1)
+                b[p[0]] = "";
+            else
+                b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+        }
+        return b;
+    })(window.location.search.substr(1).split('&'));
+
+    if (!(querystring['dot_xs'] && querystring['dot_ys'])) {
+        console.log("No dots present in URL parameters. Specify them using dot_xs and dot_ys");
+        return [];
+    }
+
+    xs = querystring['dot_xs'].split(",");
+    ys = querystring['dot_ys'].split(",");    
+    if (!(xs.length === ys.length)) {
+        console.log("Invalid dots: number of x coords doesn't match number of y coords.");
+        return [];
+    }
+
+    var allCoords = [];
+    for (var i = 0; i < xs.length;i++) {
+        allCoords.push([ xs[i], ys[i] ]);
+    }
+    return allCoords;
+}
+
+function createAliens() {
 
     for (var y = 0; y < 4; y++)
     {
@@ -125,7 +165,7 @@ function createAliens () {
     tween.onLoop.add(descend, this);
 }
 
-function setupInvader (invader) {
+function setupInvader(invader) {
 
     invader.anchor.x = 0.5;
     invader.anchor.y = 0.5;
@@ -276,7 +316,7 @@ function enemyFires () {
 
 }
 
-function fireBullet () {
+function fireBullet() {
 
     //  To avoid them being allowed to fire too fast we set a time limit
     if (game.time.now > bulletTime)
@@ -295,14 +335,14 @@ function fireBullet () {
 
 }
 
-function resetBullet (bullet) {
+function resetBullet(bullet) {
 
     //  Called if the bullet goes out of the screen
     bullet.kill();
 
 }
 
-function restart () {
+function restart() {
 
     //  A new level starts
     
