@@ -27,6 +27,8 @@ var enemyBullet;
 var firingTimer = 0;
 var stateText;
 var livingEnemies = [];
+var tapTargetX;
+var tapTargetY;
 
 function create() {
 
@@ -186,22 +188,18 @@ function update() {
 
     if (player.alive)
     {
-        //  Reset the player, then check for movement keys
-        player.body.velocity.setTo(0, 0);
-
-        if (cursors.left.isDown)
-        {
-            player.body.velocity.x = -200;
-        }
-        else if (cursors.right.isDown)
-        {
-            player.body.velocity.x = 200;
-        }
-
-        //  Firing?
-        if (fireButton.isDown)
-        {
+        // If mouse is down, register tap target and fire bullet
+        if (game.input.mousePointer.isDown) {
+            tapTargetX = game.input.x;
+            tapTargetY = game.input.y;
             fireBullet();
+        }
+
+        // If the player has reached the tap target, stop, otherwise move there
+        if (Phaser.Rectangle.contains(player.body, tapTargetX, tapTargetY)) {
+            player.body.velocity.setTo(0, 0);
+        } else {
+            game.physics.arcade.moveToXY(player, tapTargetX, tapTargetY, 400);
         }
 
         if (game.time.now > firingTimer)
