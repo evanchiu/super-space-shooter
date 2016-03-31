@@ -66,11 +66,6 @@ function create() {
     aliens = game.add.group();
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
-
-    var urlCoords = readCoordinatesFromUrl().map(function (coordinate) {
-        return "(" + coordinate + ")";
-    });
-    console.log("All coords from URL: " + urlCoords);
     createAliens();
 
     //  The score
@@ -144,18 +139,22 @@ function readCoordinatesFromUrl() {
 }
 
 function createAliens() {
+    var urlCoords = readCoordinatesFromUrl()
+    var urlCoordsString = urlCoords.map(function (coordinate) {
+        return "(" + coordinate + ")";
+    });
+    console.log("All coords from URL: " + urlCoordsString);
 
-    for (var y = 0; y < 4; y++)
-    {
-        for (var x = 0; x < 10; x++)
-        {
-            var alien = aliens.create(x * 48, y * 50, 'invader');
-            alien.anchor.setTo(0.5, 0.5);
-            alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
-            alien.play('fly');
-            alien.body.moves = false;
-        }
-    }
+    urlCoords.map(function(coordinate) {
+        var x = coordinate[0];
+        var y = coordinate[1];
+
+        var alien = aliens.create(x * 48, y * 50, 'invader');
+        alien.anchor.setTo(0.5, 0.5);
+        alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
+        alien.play('fly');
+        alien.body.moves = false;
+    });
 
     aliens.x = 100;
     aliens.y = 50;
