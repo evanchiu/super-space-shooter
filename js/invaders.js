@@ -200,8 +200,7 @@ function update() {
     //  Scroll the background
     starfield.tilePosition.y += 2;
 
-    if (player.alive)
-    {
+    if (player.alive) {
         // If mouse is down, register tap target and fire bullet
         if (game.input.mousePointer.isDown) {
             tapTargetX = game.input.x;
@@ -216,8 +215,7 @@ function update() {
             game.physics.arcade.moveToXY(player, tapTargetX, tapTargetY, 400);
         }
 
-        if (game.time.now > firingTimer)
-        {
+        if (game.time.now > firingTimer) {
             enemyFires();
         }
 
@@ -273,8 +271,7 @@ function enemyHitsPlayer (player,bullet) {
 
     live = lives.getFirstAlive();
 
-    if (live)
-    {
+    if (live) {
         live.kill();
     }
 
@@ -284,8 +281,7 @@ function enemyHitsPlayer (player,bullet) {
     explosion.play('kaboom', 30, false, true);
 
     // When the player dies
-    if (lives.countLiving() < 1)
-    {
+    if (lives.countLiving() < 1) {
         player.kill();
         enemyBullets.callAll('kill');
 
