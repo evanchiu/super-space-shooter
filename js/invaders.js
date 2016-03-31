@@ -104,6 +104,39 @@ function create() {
     
 }
 
+function createAliens() {
+    var coordinates = readCoordinatesFromUrl();
+
+    // Use default space invaders pattern if we can't pull from URL
+    if (!coordinates || coordinates.length <= 0) {
+        for (var y = 0; y < 4; y++) {
+            for (var x = 0; x < 10; x++) {
+                coordinates.push([x, y]);
+            }
+        }
+    }
+
+    coordinates.map(function(coordinate) {
+        var x = coordinate[0];
+        var y = coordinate[1];
+
+        var alien = aliens.create(x * 48, y * 50, 'invader');
+        alien.anchor.setTo(0.5, 0.5);
+        alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
+        alien.play('fly');
+        alien.body.moves = false;
+    });
+
+    aliens.x = 100;
+    aliens.y = 50;
+
+    //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
+    var tween = game.add.tween(aliens).to( { x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+
+    //  When the tween loops it calls descend
+    tween.onLoop.add(descend, this);
+}
+
 // Loads dots from query params.
 // Example:
 // http://url?dot_xs=1,2,3&dot_ys=4,5,6
@@ -139,35 +172,13 @@ function readCoordinatesFromUrl() {
     for (var i = 0; i < xs.length;i++) {
         allCoords.push([ xs[i], ys[i] ]);
     }
-    return allCoords;
-}
 
-function createAliens() {
-    var urlCoords = readCoordinatesFromUrl()
-    var urlCoordsString = urlCoords.map(function (coordinate) {
+    var urlCoordsString = allCoords.map(function (coordinate) {
         return "(" + coordinate + ")";
     });
     console.log("All coords from URL: " + urlCoordsString);
 
-    urlCoords.map(function(coordinate) {
-        var x = coordinate[0];
-        var y = coordinate[1];
-
-        var alien = aliens.create(x * 48, y * 50, 'invader');
-        alien.anchor.setTo(0.5, 0.5);
-        alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
-        alien.play('fly');
-        alien.body.moves = false;
-    });
-
-    aliens.x = 100;
-    aliens.y = 50;
-
-    //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-    var tween = game.add.tween(aliens).to( { x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
-
-    //  When the tween loops it calls descend
-    tween.onLoop.add(descend, this);
+    return allCoords;
 }
 
 function setupInvader(invader) {
