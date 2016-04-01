@@ -304,7 +304,7 @@ function update() {
             player.body.velocity.setTo(0, 0);
             tapTarget = null;
         } else {
-            game.physics.arcade.moveToXY(player, tapTargetX, tapTargetY, 400 * speedAdjustment);
+            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400 * speedAdjustment);
         }
 
         // Exhaust comes out the bottom of the ship
