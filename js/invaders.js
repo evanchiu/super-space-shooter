@@ -50,6 +50,7 @@ var livingEnemies = [];
 var tapTargetX;
 var tapTargetY;
 
+var alienTimer;
 var speedAdjustment = 1;
 var alienStartX = 100;
 var alienStartY = 50;
@@ -90,7 +91,7 @@ function create() {
     aliens = game.add.group();
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
-    aliens.createMultiple(300, 'invader');
+    aliens.createMultiple(100, 'invader');
     createInitialAliens();
 
 	// Highscore
@@ -165,6 +166,8 @@ function createAlien(x, y) {
     alien.body.moves = true;
     alien.checkWorldBounds = true;
     alien.outOfBoundsKill = true;
+    
+    alienTimer = game.time.now + 200;
 }
 
 // Loads dots from query params.
@@ -221,6 +224,11 @@ function update() {
 
     //  Scroll the background
     starfield.tilePosition.y += 2;
+
+    // Spawn aliens randomly at the top of the screen
+    if (game.time.now > alienTimer) {
+        createAlien(Math.random() * 10, -1);
+    }
 
     if (player.alive) {
         // If pointer is down, register tap target and fire bullet
@@ -369,12 +377,14 @@ function restart() {
     
     //resets the life count
     lives.callAll('revive');
-    //  And brings the aliens back from the dead :)
-    aliens.removeAll();
-    createInitialAliens();
 
     //revives the player
     player.revive();
+
+    //  And brings the aliens back from the dead :)
+    aliens.callAll('kill');
+    createInitialAliens();
+
     //hides the text
     stateText.visible = false;
 	
