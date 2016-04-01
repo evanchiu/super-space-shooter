@@ -157,9 +157,11 @@ function createInitialAliens() {
 
     // Use default space invaders pattern if we can't pull from URL
     if (!coordinates || coordinates.length <= 0) {
-        for (var y = 0; y < 3; y++) {
-            for (var x = 0; x < 8; x++) {
-                coordinates.push([x * 48, y * 50]);
+        var numCols = 8;
+        var numRows = 6;
+        for (var y = 0; y < numRows; y++) {
+            for (var x = 0; x < numCols; x++) {
+                coordinates.push([(x / numCols) * screenwidth, (y / numRows) * screenheight]);
             }
         }
     }
@@ -308,7 +310,7 @@ function update() {
         exhaust.emitY = player.y+25;
 
         if (game.time.now > firingTimer) {
-            enemyFires();
+            // enemyFires();
         }
 
         //  Run collision against random aliens
@@ -351,7 +353,7 @@ function update() {
     }
 
     if (game.time.now > alienGroupCreateTimer) {
-        var margin = 200;
+        var margin = 300;
         createAlienGroup(margin + Math.random() * (screenwidth - margin), -100, 0, 50, 'shoe');
         console.log("Creating alien group");
     }
