@@ -25,11 +25,13 @@ function preload() {
     game.load.image('starfield',           'img/spaceclouds.png');
 
     highscore = localStorage.getItem("highscore");
-    if (highscore == null) {
+    if (highscore == null || resetHighscore) {
 	    highscore = 0;
 	    localStorage.setItem("highscore", highscore); 
 	}
 }
+
+var resetHighscore = false;
 
 var player;
 var exhaust;
@@ -46,6 +48,7 @@ var scoreString = '';
 var scoreText;
 var highscore = 0;
 var highscoreString = '';
+var newHighscore = false;
 var highscoreText;
 var lives;
 var enemyBullet;
@@ -59,9 +62,14 @@ var alienGroupCreateTimer;
 var alienStartX = 0;
 var alienStartY = 0;
 
-var speedAdjustment = 1;
+var WARPSPEED_INCREMENT = 0.1;
+var WARP_LEVEL_MAX = 10;
+var WARP_TIMER_INCREMENT = 10000;
+var warpspeedAdjustment = 1;
 var warpString;
 var warpLevel = 1;
+var warpTimer = WARP_TIMER_INCREMENT;
+var warpText;
 
 function create() {
 
@@ -128,13 +136,13 @@ function create() {
 
     //  Warp Level
 	warpString = 'Warp Lvl : ';
-    game.add.text(game.world.width - 100, 10, warpString + warpLevel, { font: '16px Arial', fill: '#fff' });
+    warpText = game.add.text(game.world.width - 100, 10, warpString + warpLevel, { font: '16px Arial', fill: '#fff' });
 	
 	// Lives (worth keeping around for easy shield implementation)
 	lives = game.add.group();
 
     // Game state text (game over, etc.)
-    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '24px Arial', fill: '#fff' });
+    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '24px Arial', fill: '#fff', boundsAlignH: "center", boundsAlignV: "middle"});
     stateText.anchor.setTo(0.5, 0.5);
     stateText.visible = false;
 
@@ -287,8 +295,10 @@ function setupInvader(invader) {
 
 function update() {
 
+    updateWarp();
+
     //  Scroll the background
-    starfield.tilePosition.y += 2 * speedAdjustment;
+    starfield.tilePosition.y += 2 * warpspeedAdjustment;
 
     if (player.alive) {
         // If pointer is down, register tap target and fire bullet
@@ -302,7 +312,7 @@ function update() {
             player.body.velocity.setTo(0, 0);
             tapTarget = null;
         } else {
-            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400 * speedAdjustment);
+            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400 * warpspeedAdjustment);
         }
 
         // Exhaust comes out the bottom of the ship
@@ -414,10 +424,32 @@ function render() {
 
 }
 
+function updateWarp() {
+    if ((lives.countLiving() > 0) && (warpLevel < WARP_LEVEL_MAX) && (game.time.now > warpTimer)) {
+		increaseScore(1000);
+	    warpLevel += 1;
+		warpspeedAdjustment += WARPSPEED_INCREMENT;
+		if (warpLevel >= WARP_LEVEL_MAX) {
+		    warpText.text = warpString + 'MAX';
+		} else {
+		    warpText.text = warpString + warpLevel;
+		    warpTimer = game.time.now + WARP_TIMER_INCREMENT;
+		}
+	}
+}
+
+function resetWarp() {
+	warpTimer = game.time.now + WARP_TIMER_INCREMENT;
+    warpLevel = 1;
+	warpspeedAdjustment = 1;
+	warpText.text = warpString + warpLevel;
+}
+
 function increaseScore(value) {
-    score += value;
+    score += value * warpLevel;
 	scoreText.text = scoreString + score;
 	if (score > highscore) {
+	    newHighscore = true;
 	    highscore = score;
 		highscoreText.text = highscoreString + highscore;
 	}
@@ -426,6 +458,7 @@ function increaseScore(value) {
 function resetScore () {
     score = 0;
 	scoreText.text = scoreString + score;
+	newHighscore = false;
 	localStorage.setItem("highscore", highscore );
 }
 
@@ -502,8 +535,12 @@ function handlePlayerHitByBullet(player, bullet) {
         player.kill();
         exhaust.kill();
         enemyBullets.callAll('kill');
-
-        stateText.text=" GAME OVER \n Click to restart";
+        
+		if (newHighscore) {
+            stateText.text="    GAME OVER \nNew HIGHSCORE!";
+		} else {
+            stateText.text=" GAME OVER " ;
+		}
         stateText.visible = true;
 
         //the "click to restart" handler
@@ -536,8 +573,8 @@ function enemyFires () {
         // And fire the bullet from this enemy
         enemyBullet.reset(shooter.body.x, shooter.body.y);
 
-        game.physics.arcade.moveToObject(enemyBullet,player,120 * speedAdjustment);
-        firingTimer = game.time.now + 2000 / speedAdjustment;
+        game.physics.arcade.moveToObject(enemyBullet,player,120 * warpspeedAdjustment);
+        firingTimer = game.time.now + 2000 / warpspeedAdjustment;
     }
 
 }
@@ -552,8 +589,8 @@ function fireBullet() {
         if (bullet) {
             //  And fire it
             bullet.reset(player.x, player.y + 8);
-            bullet.body.velocity.y = -400 * speedAdjustment;
-            bulletTime = game.time.now + 200 / speedAdjustment;
+            bullet.body.velocity.y = -400 * warpspeedAdjustment;
+            bulletTime = game.time.now + 200 / warpspeedAdjustment;
         }
     }
 
@@ -581,5 +618,6 @@ function restart() {
     stateText.visible = false;
 	
 	resetScore();
+	resetWarp();
 
 }
