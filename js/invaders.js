@@ -19,7 +19,7 @@ function preload() {
     game.load.image('invader', 'img/bluedot.png', 32, 32);
     game.load.image('ship', 'assets/player.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-    game.load.image('starfield', 'assets/starfield.png');
+    game.load.image('starfield', 'img/clouds.png');
 	
     highscore = localStorage.getItem("highscore");
     if (highscore == null) {
@@ -59,7 +59,7 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //  The scrolling starfield background
-    starfield = game.add.tileSprite(0, 0, 800, 600, 'starfield');
+    starfield = game.add.tileSprite(0, 0, screenwidth, screenheight, 'starfield');
 
     //  Our bullet group
     bullets = game.add.group();
