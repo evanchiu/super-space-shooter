@@ -50,6 +50,8 @@ var livingEnemies = [];
 var tapTargetX;
 var tapTargetY;
 
+var speedAdjustment = 1;
+
 function create() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -279,18 +281,6 @@ function collisionHandler (bullet, alien) {
     var explosion = explosions.getFirstExists(false);
     explosion.reset(alien.body.x, alien.body.y);
     explosion.play('kaboom', 30, false, true);
-
-    if (aliens.countLiving() == 0)
-    {
-        increaseScore(1000);
-
-        enemyBullets.callAll('kill',this);
-        stateText.text = " You Won, \n Click to restart";
-        stateText.visible = true;
-
-        //the "click to restart" handler
-        game.input.onTap.addOnce(restart,this);
-    }
 
 }
 
