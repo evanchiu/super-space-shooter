@@ -244,7 +244,6 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
         wrappedAlien.children.forEach(function(rawAlien) {
             rawAlien.outOfBoundsKill = false;
             rawAlien.parentGroup = groupSprite;
-            rawAlien.tint = 0x00ffff;
         });
         groupSprite.addChild(wrappedAlien);
     }
