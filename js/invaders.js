@@ -210,9 +210,6 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
         });
         groupSprite.addChild(wrappedAlien);
     }
-
-
-    alienGroupCreateTimer = game.time.now + 15000 + Math.random() * 2000;
 }
 
 function createAlien(x, y, xVel, yVel) {
@@ -229,8 +226,6 @@ function createAlien(x, y, xVel, yVel) {
     alien.checkWorldBounds = true;
     alien.outOfBoundsKill = true;
     alien.blinkTimer = game.time.now;
-
-    alienCreateTimer = game.time.now + 200;
 
     return wrappedAlien;
 }
@@ -350,12 +345,13 @@ function update() {
     // Spawn aliens randomly at the top of the screen
     if (game.time.now > alienCreateTimer) {
         createRandomVelAlien(Math.random() * screenwidth, 0);
+        alienCreateTimer = game.time.now + 300;
     }
 
     if (game.time.now > alienGroupCreateTimer) {
         var margin = 200;
         createAlienGroup(margin + Math.random() * (screenwidth - 2 * margin), -100, 0, 50, 'shoe');
-        console.log("Creating alien group");
+        alienGroupCreateTimer = game.time.now + 15000 + Math.random() * 2000;
     }
 
     // Teleport around random aliens
