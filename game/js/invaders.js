@@ -19,7 +19,7 @@ function preload() {
 
     game.load.spritesheet('bullet',        'assets/arrow-double-16px.png', 8, 35);
     game.load.image('ship',                'assets/arrowhead-32px.png');
-    game.load.image('shoe',                'assets/shoe.png');
+    game.load.image('shoe',                'assets/shoe.png', 10, 10);
     game.load.image('invader',             'assets/bluedot.png', 32, 32);
     game.load.image('starfield',           'assets/spaceclouds.png');
 
@@ -177,8 +177,8 @@ function createInitialAliens() {
 
     // Use default space invaders pattern if we can't pull from URL
     if (!coordinates || coordinates.length <= 0) {
-        var numCols = 8;
-        var numRows = 6;
+        var numCols = 4;
+        var numRows = 3;
         for (var y = 0; y < numRows; y++) {
             for (var x = 0; x < numCols; x++) {
                 coordinates.push([(x / numCols) * screenwidth, (y / numRows) * screenheight]);
@@ -214,7 +214,7 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
     groupSprite.body.moves = true;
     groupSprite.checkWorldBounds = true;
     groupSprite.outOfBoundsKill = true;
-    groupSprite.alpha = .5;
+    groupSprite.alpha = .6;
     groupSprite.events.onKilled.add(function() {
         groupSprite.children.forEach(function(wrappedAlien) {
             wrappedAlien.children.forEach(function(rawAlien) {
@@ -234,7 +234,6 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
         wrappedAlien.children.forEach(function(rawAlien) {
             rawAlien.outOfBoundsKill = false;
             rawAlien.parentGroup = groupSprite;
-            rawAlien.tint = 0x00ffff;
         });
         groupSprite.addChild(wrappedAlien);
     }
