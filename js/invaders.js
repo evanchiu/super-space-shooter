@@ -9,7 +9,7 @@ var g = d.getElementsByTagName('body')[0];
 var screenwidth = w.innerWidth || e.clientWidth || g.clientWidth;
 var screenheight = w.innerHeight || e.clientHeight || g.clientHeight;
 
-var game = new Phaser.Game(screenwidth, screenheight, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(screenwidth, screenheight, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render }, true);
 
 function preload() {
 
