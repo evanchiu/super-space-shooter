@@ -8,13 +8,10 @@ A super space shooting game where you dodge and destroy asteroids, developed at 
 # Development
 
 ## Run it locally
-Just run this in the super-space-shooter directory, then browse to http://localhost:8000
+Just run this in the super-space-shooter directory, then browse to [http://localhost:8000/game/index.html](http://localhost:8000/game/index.html)
 
     python -m SimpleHTTPServer
 
 ## Remaining Goals/Assignments
 * Rotation - Out of scope
 * Basic Sound Effects - Joseph
-* Fix Spawn - Kevin
-* Game Scaling - Joseph
-* Removal of Lives - Joseph
