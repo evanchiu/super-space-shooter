@@ -2,7 +2,14 @@
 // Test URL: http://localhost:8000/invaders_enemies.html?dot_xs=1,2,3&dot_ys=1,2,6
 // Use this or there won't be enemies
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+var w = window;
+var d = document;
+var e = d.documentElement;
+var g = d.getElementsByTagName('body')[0];
+var screenwidth = w.innerWidth || e.clientWidth || g.clientWidth;
+var screenheight = w.innerHeight || e.clientHeight || g.clientHeight;
+
+var game = new Phaser.Game(screenwidth, screenheight, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
 
@@ -83,18 +90,18 @@ function create() {
 
 	// Highscore
 	highscoreString = 'Highscore : ';
-    highscoreText = game.add.text(10, 10, highscoreString + highscore, { font: '34px Arial', fill: '#fff' });
+    highscoreText = game.add.text(10, 10, highscoreString + highscore, { font: '16px Arial', fill: '#fff' });
 
     //  The score	
     scoreString = 'Score : ';
-    scoreText = game.add.text(10, 44, scoreString + score, { font: '34px Arial', fill: '#fff' });
+    scoreText = game.add.text(10, 44, scoreString + score, { font: '16px Arial', fill: '#fff' });
 
     //  Lives
     lives = game.add.group();
-    game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '34px Arial', fill: '#fff' });
+    game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '16px Arial', fill: '#fff' });
 
     //  Text
-    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
+    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '24px Arial', fill: '#fff' });
     stateText.anchor.setTo(0.5, 0.5);
     stateText.visible = false;
 
