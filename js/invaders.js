@@ -137,11 +137,11 @@ function create() {
 
     //  The score	
     scoreString = 'Score : ';
-    scoreText = game.add.text(10, 44, scoreString + score, { font: '16px Arial', fill: '#fff' });
+    scoreText = game.add.text(10, 28, scoreString + score, { font: '16px Arial', fill: '#fff' });
 
     //  Warp Level
 	warpString = 'Warp Lvl : ';
-    warpText = game.add.text(game.world.width - 100, 10, warpString + warpLevel, { font: '16px Arial', fill: '#fff' });
+    warpText = game.add.text(10, 46, warpString + warpLevel, { font: '16px Arial', fill: '#fff' });
 	
 	// Lives (worth keeping around for easy shield implementation)
 	lives = game.add.group();
@@ -403,7 +403,7 @@ function teleBlink(rawAlien, wrappedAlien, xRadius, yRadius, blinkTime) {
         wrappedAlien.y = yRadius - Math.random() * yRadius * 2;
     } else if (game.time.now > rawAlien.blinkTimer + blinkTime * Math.random()) {
         rawAlien.alpha = 1.0;
-        rawAlien.blinkTimer = game.time.now + Math.random() * blinkTime;
+        rawAlien.blinkTimer = game.time.now + (Math.random() * blinkTime) / warpspeedAdjustment;
     }
 }
 
