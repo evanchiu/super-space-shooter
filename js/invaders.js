@@ -13,6 +13,12 @@ function preload() {
     game.load.image('ship', 'assets/player.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
     game.load.image('starfield', 'assets/starfield.png');
+	
+    highscore = localStorage.getItem("highscore");
+    if (highscore == null) {
+	    highscore = 0;
+	    localStorate.setItem("highscore", highscore); 
+	}
 }
 
 var player;
@@ -26,6 +32,9 @@ var starfield;
 var score = 0;
 var scoreString = '';
 var scoreText;
+var highscore = 0;
+var highscoreString = '';
+var highscoreText;
 var lives;
 var enemyBullet;
 var firingTimer = 0;
@@ -72,9 +81,13 @@ function create() {
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
     createAliens();
 
-    //  The score
+	// Highscore
+	highscoreString = 'Highscore : ';
+    highscoreText = game.add.text(10, 10, highscoreString + highscore, { font: '34px Arial', fill: '#fff' });
+
+    //  The score	
     scoreString = 'Score : ';
-    scoreText = game.add.text(10, 10, scoreString + score, { font: '34px Arial', fill: '#fff' });
+    scoreText = game.add.text(10, 44, scoreString + score, { font: '34px Arial', fill: '#fff' });
 
     //  Lives
     lives = game.add.group();
@@ -233,6 +246,21 @@ function render() {
 
 }
 
+function increaseScore (value) {
+    score += value;
+	scoreText.text = scoreString + score;
+	if (score > highscore) {
+	    highscore = score;
+		highscoreText.text = highscoreString + highscore;
+	}
+}
+
+function resetScore () {
+    score = 0;
+	scoreText.text = scoreString + score;
+	localStorage.setItem("highscore", highscore );
+}
+
 function collisionHandler (bullet, alien) {
 
     //  When a bullet hits an alien we kill them both
@@ -240,8 +268,7 @@ function collisionHandler (bullet, alien) {
     alien.kill();
 
     //  Increase the score
-    score += 20;
-    scoreText.text = scoreString + score;
+    increaseScore(20);
 
     //  And create an explosion :)
     var explosion = explosions.getFirstExists(false);
@@ -250,8 +277,7 @@ function collisionHandler (bullet, alien) {
 
     if (aliens.countLiving() == 0)
     {
-        score += 1000;
-        scoreText.text = scoreString + score;
+        increaseScore(1000);
 
         enemyBullets.callAll('kill',this);
         stateText.text = " You Won, \n Click to restart";
@@ -362,5 +388,7 @@ function restart() {
     player.revive();
     //hides the text
     stateText.visible = false;
+	
+	resetScore();
 
 }
