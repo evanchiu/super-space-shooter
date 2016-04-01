@@ -12,7 +12,6 @@ var screenheight = w.innerHeight || e.clientHeight || g.clientHeight;
 var game = new Phaser.Game(screenwidth, screenheight, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render }, true);
 
 function preload() {
-
     game.load.spritesheet('kaboom',        'assets/explode.png', 128, 128);
     game.load.image('fire1',               'assets/fire1.png');
     game.load.image('fire2',               'assets/fire2.png');
@@ -24,6 +23,9 @@ function preload() {
     game.load.image('invader',             'img/bluedot.png', 32, 32);
     game.load.image('starfield',           'img/spaceclouds.png');
 
+    game.load.audio('explosionSound', 'assets/Explosion4.wav');
+    game.load.audio('bigExplosionSound', 'assets/BigExplosion5.wav');
+	
     highscore = localStorage.getItem("highscore");
     if (highscore == null || resetHighscore) {
 	    highscore = 0;
@@ -70,6 +72,9 @@ var warpString;
 var warpLevel = 1;
 var warpTimer = WARP_TIMER_INCREMENT;
 var warpText;
+
+var explosionSound;
+var bigExplosionSound;
 
 function create() {
 
@@ -161,7 +166,10 @@ function create() {
     //  And some controls to play the game with
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    
+
+    // Sounds
+    explosionSound = game.add.audio('explosionSound');
+    bigExplosionSound = game.add.audio('bigExplosionSound');
 }
 
 function createInitialAliens() {
@@ -465,7 +473,6 @@ function resetScore () {
 function handleBulletHitsAlien(alien, bullet) {
     // If the alien is part of a group, do something to its parent
     if (alien.parentGroup) {
-        console.log("Hit alien that was part of group");
         alien.parentGroup.tint = 0xff00000;
         alien.parentGroup.tintTimer = game.time.now + 30;
     }
@@ -481,7 +488,7 @@ function handleBulletHitsAlien(alien, bullet) {
     var explosion = explosions.getFirstExists(false);
     explosion.reset(alien.body.x, alien.body.y);
     explosion.play('kaboom', 30, false, true);
-
+    explosionSound.play();
 }
 
 function handleAlienGroupDead(alienGroup) {
@@ -511,6 +518,7 @@ function handleAlienGroupDead(alienGroup) {
             explosion.play('kaboom', 30, false, true);
         }
     }
+    bigExplosionSound.play();
 
     alienGroups.remove(alienGroup);
 }
