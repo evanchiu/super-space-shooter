@@ -59,8 +59,8 @@ var tapTarget;
 var alienCreateTimer;
 var alienGroupCreateTimer;
 var speedAdjustment = 1;
-var alienStartX = 100;
-var alienStartY = 50;
+var alienStartX = 0;
+var alienStartY = 0;
 
 function create() {
 
@@ -166,6 +166,11 @@ function createInitialAliens() {
         }
     }
 
+    var coordsStr = coordinates.map(function (coordinate) {
+        return "(" + coordinate + ")";
+    });
+    console.log("Initial coords: " + coordsStr);
+
     coordinates.map(function(coordinate) {
         createRandomVelAlien(coordinate[0], coordinate[1]);
     });
@@ -178,6 +183,7 @@ function createInitialAliens() {
 
 function createRandomVelAlien(x, y) {
     var wrappedAlien = createAlien(x, y, (Math.random() * 140) - 70, 150 + (Math.random() * 140) - 70);
+    console.log(x, y);
     aliens.add(wrappedAlien);
 }
 
@@ -255,7 +261,7 @@ function readCoordinatesFromUrl() {
     }
 
     xs = querystring['dot_xs'].split(",");
-    ys = querystring['dot_ys'].split(",");    
+    ys = querystring['dot_ys'].split(",");
     if (!(xs.length === ys.length)) {
         console.log("Invalid dots: number of x coords doesn't match number of y coords.");
         return [];
@@ -263,13 +269,8 @@ function readCoordinatesFromUrl() {
 
     var allCoords = [];
     for (var i = 0; i < xs.length;i++) {
-        allCoords.push([ xs[i], ys[i] ]);
+        allCoords.push([ parseInt(xs[i]), parseInt(ys[i]) ]);
     }
-
-    var urlCoordsString = allCoords.map(function (coordinate) {
-        return "(" + coordinate + ")";
-    });
-    console.log("All coords from URL: " + urlCoordsString);
 
     return allCoords;
 }
@@ -308,7 +309,7 @@ function update() {
             // enemyFires();
         }
 
-        //  Run collision against random aliens
+        // Run collision against random aliens
         aliens.children.forEach(function(wrappedAlien) {
             wrappedAlien.children.forEach(function(rawAlien) {
                 game.physics.arcade.overlap(bullets, rawAlien, handleBulletHitsAlien, null, this);
@@ -392,7 +393,14 @@ function render() {
     // }
 
     // Display number of aliens (alive or dead)
-    // game.debug.text("Number of aliens: " + aliens.children.length, 100, 100);
+    /*
+    game.debug.text("Number of aliens: " + aliens.children.length, 100, 100);
+    aliens.children.forEach(function(wrappedAlien) {
+        wrappedAlien.children.forEach(function(rawAlien) {
+            console.log("Alien x,y", rawAlien.x, rawAlien.y);
+        });
+    });
+    */
 
     // Display alien group bounding boxes
     /*
@@ -435,7 +443,7 @@ function handleBulletHitsAlien(bullet, alien) {
 
 function handleAlienGroupDead(alienGroup) {
     if (!alienGroup.alive) {
-
+        return;
     }
     alienGroup.kill();
 
