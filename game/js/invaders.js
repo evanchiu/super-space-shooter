@@ -25,6 +25,8 @@ function preload() {
 
     game.load.audio('explosionSound',      'assets/LessAbrasiveExplosion4.wav');
     game.load.audio('bigExplosionSound',   'assets/BigExplosion5.wav');
+    game.load.audio('hurtSound',           'assets/Hit_Hurt2.wav');
+    game.load.audio('superHurtSound',      'assets/Super_Hit_Hurt.wav');
 
     highscore = localStorage.getItem("highscore");
     if (highscore == null || resetHighscore) {
@@ -75,6 +77,8 @@ var warpText;
 
 var explosionSound;
 var bigExplosionSound;
+var hurtSound;
+var superHurtSound;
 
 function create() {
 
@@ -170,6 +174,8 @@ function create() {
     // Sounds
     explosionSound = game.add.audio('explosionSound');
     bigExplosionSound = game.add.audio('bigExplosionSound');
+    hurtSound = game.add.audio('hurtSound');
+    superHurtSound = game.add.audio('superHurtSound');
 }
 
 function createInitialAliens() {
@@ -562,6 +568,9 @@ function handlePlayerHitByObject(player, obj) {
 
         //the "click to restart" handler
         game.input.onTap.addOnce(restart,this);
+        superHurtSound.play();
+    } else {
+        hurtSound.play();
     }
 }
 
