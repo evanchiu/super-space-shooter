@@ -19,7 +19,7 @@ function preload() {
 
     game.load.spritesheet('bullet',        'assets/arrow-double-16px.png', 8, 35);
     game.load.image('ship',                'assets/arrowhead-32px.png');
-    game.load.image('shoe',                'assets/shoe.png', 10, 10);
+    game.load.image('shoe',                'assets/shoe.png');
     game.load.image('invader',             'assets/bluedot.png', 32, 32);
     game.load.image('starfield',           'assets/spaceclouds.png');
 
@@ -69,6 +69,7 @@ var alienStartY = 0;
 var WARPSPEED_INCREMENT = 0.4;
 var WARP_LEVEL_MAX = 10;
 var WARP_TIMER_INCREMENT = 10000;
+//var WARP_TIMER_INCREMENT = 1000;
 var warpspeedAdjustment = 1;
 var warpString;
 var warpLevel = 1;
@@ -183,8 +184,8 @@ function createInitialAliens() {
 
     // Use default space invaders pattern if we can't pull from URL
     if (!coordinates || coordinates.length <= 0) {
-        var numCols = 4;
-        var numRows = 3;
+        var numCols = 8;
+        var numRows = 6;
         for (var y = 0; y < numRows; y++) {
             for (var x = 0; x < numCols; x++) {
                 coordinates.push([(x / numCols) * screenwidth, (y / numRows) * screenheight]);
@@ -216,11 +217,11 @@ function createRandomVelAlien(x, y) {
 function createAlienGroup(x, y, xVel, yVel, spriteName) {
     var groupSprite = alienGroups.create(x, y, spriteName);
     groupSprite.anchor.setTo(0.5, 0.5);
-    groupSprite.body.velocity.setTo(xVel, yVel);
+    groupSprite.body.velocity.setTo(xVel, yVel * warpspeedAdjustment);
     groupSprite.body.moves = true;
     groupSprite.checkWorldBounds = true;
     groupSprite.outOfBoundsKill = true;
-    groupSprite.alpha = .6;
+    groupSprite.alpha = .5;
     groupSprite.events.onKilled.add(function() {
         groupSprite.children.forEach(function(wrappedAlien) {
             wrappedAlien.children.forEach(function(rawAlien) {
@@ -240,6 +241,7 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
         wrappedAlien.children.forEach(function(rawAlien) {
             rawAlien.outOfBoundsKill = false;
             rawAlien.parentGroup = groupSprite;
+            rawAlien.tint = 0x00ffff;
         });
         groupSprite.addChild(wrappedAlien);
     }
@@ -254,7 +256,7 @@ function createAlien(x, y, xVel, yVel) {
     alien.anchor.setTo(0.5, 0.5);
     alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
     alien.play('fly');
-    alien.body.velocity.setTo(xVel, yVel);
+    alien.body.velocity.setTo(xVel, yVel * warpspeedAdjustment);
     alien.body.moves = true;
     alien.checkWorldBounds = true;
     alien.outOfBoundsKill = true;
@@ -624,6 +626,8 @@ function fireBullet() {
 function restart() {
 
     //  A new level starts
+    resetScore();
+    resetWarp();
 
     //resets the life count
     lives.callAll('revive');
@@ -641,8 +645,4 @@ function restart() {
 
     //hides the text
     stateText.visible = false;
-
-    resetScore();
-    resetWarp();
-
 }
