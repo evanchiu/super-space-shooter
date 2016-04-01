@@ -195,11 +195,9 @@ function readCoordinatesFromUrl() {
 }
 
 function setupInvader(invader) {
-
     invader.anchor.x = 0.5;
     invader.anchor.y = 0.5;
     invader.animations.add('kaboom');
-
 }
 
 function descendAliens() {
@@ -326,19 +324,17 @@ function enemyFires () {
     livingEnemies.length=0;
 
     aliens.forEachAlive(function(alien){
-
         // put every living enemy in an array
         livingEnemies.push(alien);
     });
 
 
-    if (enemyBullet && livingEnemies.length > 0)
-    {
+    if (enemyBullet && livingEnemies.length > 0) {
         
-        var random=game.rnd.integerInRange(0,livingEnemies.length-1);
+        var random = game.rnd.integerInRange(0,livingEnemies.length-1);
 
         // randomly select one of them
-        var shooter=livingEnemies[random];
+        var shooter = livingEnemies[random];
         // And fire the bullet from this enemy
         enemyBullet.reset(shooter.body.x, shooter.body.y);
 
@@ -351,26 +347,17 @@ function enemyFires () {
 function fireBullet() {
 
     //  To avoid them being allowed to fire too fast we set a time limit
-    if (game.time.now > bulletTime)
-    {
+    if (game.time.now > bulletTime) {
         //  Grab the first bullet we can from the pool
         bullet = bullets.getFirstExists(false);
 
-        if (bullet)
-        {
+        if (bullet) {
             //  And fire it
             bullet.reset(player.x, player.y + 8);
             bullet.body.velocity.y = -400;
             bulletTime = game.time.now + 200;
         }
     }
-
-}
-
-function resetBullet(bullet) {
-
-    //  Called if the bullet goes out of the screen
-    bullet.kill();
 
 }
 
