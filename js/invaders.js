@@ -51,6 +51,8 @@ var tapTargetX;
 var tapTargetY;
 
 var speedAdjustment = 1;
+var alienStartX = 100;
+var alienStartY = 50;
 
 function create() {
 
@@ -88,7 +90,7 @@ function create() {
     aliens = game.add.group();
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
-    createAliens();
+    createInitialAliens();
 
 	// Highscore
 	highscoreString = 'Highscore : ';
@@ -126,7 +128,7 @@ function create() {
     
 }
 
-function createAliens() {
+function createInitialAliens() {
     var coordinates = readCoordinatesFromUrl();
 
     // Use default space invaders pattern if we can't pull from URL
@@ -146,17 +148,14 @@ function createAliens() {
         alien.anchor.setTo(0.5, 0.5);
         alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
         alien.play('fly');
-        alien.body.moves = false;
+        alien.body.velocity.setTo((Math.random() * 150) - 75, 150 + (Math.random() * 150) - 75);
+        alien.body.moves = true;
+        alien.checkWorldBounds = true;
+        alien.outOfBoundsKill = true;
     });
 
-    aliens.x = 100;
-    aliens.y = 50;
-
-    //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-    var tween = game.add.tween(aliens).to( { x: 200 }, 500, Phaser.Easing.Linear.None, true, 0, 1, true).loop();
-
-    //  When the tween loops it calls descendAliens
-    tween.onLoop.add(descendAliens, this);
+    aliens.x = alienStartX;
+    aliens.y = alienStartY;
 }
 
 // Loads dots from query params.
@@ -209,10 +208,6 @@ function setupInvader(invader) {
     invader.animations.add('kaboom');
 }
 
-function descendAliens() {
-    aliens.y += 20;
-}
-
 function update() {
 
     //  Scroll the background
@@ -240,6 +235,7 @@ function update() {
         //  Run collision
         game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this);
         game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
+        game.physics.arcade.overlap(aliens, player, enemyHitsPlayer, null, this);
     }
 
 }
@@ -366,7 +362,7 @@ function restart() {
     lives.callAll('revive');
     //  And brings the aliens back from the dead :)
     aliens.removeAll();
-    createAliens();
+    createInitialAliens();
 
     //revives the player
     player.revive();
