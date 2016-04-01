@@ -58,9 +58,12 @@ var tapTarget;
 
 var alienCreateTimer;
 var alienGroupCreateTimer;
-var speedAdjustment = 1;
 var alienStartX = 0;
 var alienStartY = 0;
+
+var speedAdjustment = 1;
+var warpString;
+var warpLevel = 1;
 
 function create() {
 
@@ -125,9 +128,12 @@ function create() {
     scoreString = 'Score : ';
     scoreText = game.add.text(10, 44, scoreString + score, { font: '16px Arial', fill: '#fff' });
 
-    //  Lives
-    lives = game.add.group();
-    game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '16px Arial', fill: '#fff' });
+    //  Warp Level
+	warpString = 'Warp Lvl : ';
+    game.add.text(game.world.width - 100, 10, warpString + warpLevel, { font: '16px Arial', fill: '#fff' });
+	
+	// Lives (worth keeping around for easy shield implementation)
+	lives = game.add.group();
 
     // Game state text (game over, etc.)
     stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '24px Arial', fill: '#fff' });
@@ -284,7 +290,7 @@ function setupInvader(invader) {
 function update() {
 
     //  Scroll the background
-    starfield.tilePosition.y += 2;
+    starfield.tilePosition.y += 2 * speedAdjustment;
 
     if (player.alive) {
         // If pointer is down, register tap target and fire bullet
@@ -298,7 +304,7 @@ function update() {
             player.body.velocity.setTo(0, 0);
             tapTarget = null;
         } else {
-            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400);
+            game.physics.arcade.moveToXY(player, tapTargetX, tapTargetY, 400 * speedAdjustment);
         }
 
         // Exhaust comes out the bottom of the ship
@@ -526,8 +532,8 @@ function enemyFires () {
         // And fire the bullet from this enemy
         enemyBullet.reset(shooter.body.x, shooter.body.y);
 
-        game.physics.arcade.moveToObject(enemyBullet,player,120);
-        firingTimer = game.time.now + 2000;
+        game.physics.arcade.moveToObject(enemyBullet,player,120 * speedAdjustment);
+        firingTimer = game.time.now + 2000 / speedAdjustment;
     }
 
 }
@@ -542,8 +548,8 @@ function fireBullet() {
         if (bullet) {
             //  And fire it
             bullet.reset(player.x, player.y + 8);
-            bullet.body.velocity.y = -400;
-            bulletTime = game.time.now + 200;
+            bullet.body.velocity.y = -400 * speedAdjustment;
+            bulletTime = game.time.now + 200 / speedAdjustment;
         }
     }
 
