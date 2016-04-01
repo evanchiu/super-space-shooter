@@ -47,8 +47,7 @@ var enemyBullet;
 var firingTimer = 0;
 var stateText;
 var livingEnemies = [];
-var tapTargetX;
-var tapTargetY;
+var tapTarget;
 
 var alienTimer;
 var speedAdjustment = 1;
@@ -238,16 +237,15 @@ function update() {
     if (player.alive) {
         // If pointer is down, register tap target and fire bullet
         if (game.input.activePointer.isDown) {
-            tapTargetX = game.input.x;
-            tapTargetY = game.input.y;
+            tapTarget = game.input.activePointer.position;
             fireBullet();
         }
 
         // If the player has reached the tap target, stop, otherwise move there
-        if (Phaser.Rectangle.contains(player.body, tapTargetX, tapTargetY)) {
+        if (tapTarget == null || Phaser.Rectangle.contains(player.body, tapTarget.x, tapTarget.y)) {
             player.body.velocity.setTo(0, 0);
         } else {
-            game.physics.arcade.moveToXY(player, tapTargetX, tapTargetY, 400);
+            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400);
         }
 
         if (game.time.now > firingTimer) {
@@ -385,6 +383,8 @@ function restart() {
 
     //revives the player
     player.revive();
+    player.position = new Phaser.Point(screenwidth/2, screenheight-50);
+    tapTarget = null;
 
     //  And brings the aliens back from the dead :)
     aliens.callAll('kill');
