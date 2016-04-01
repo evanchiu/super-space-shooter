@@ -28,6 +28,8 @@ function preload() {
     game.load.audio('hurtSound',           'assets/Hit_Hurt2.wav');
     game.load.audio('superHurtSound',      'assets/Super_Hit_Hurt.wav');
     game.load.audio('warpUpSound',         'assets/Warp_Up.wav');
+    game.load.audio('laserSound',          'assets/Laser_Shoot6.wav');
+
 
     highscore = localStorage.getItem("highscore");
     if (highscore == null || resetHighscore) {
@@ -81,6 +83,7 @@ var bigExplosionSound;
 var hurtSound;
 var superHurtSound;
 var warpUpSound;
+var laserSound;
 
 function create() {
 
@@ -179,6 +182,7 @@ function create() {
     hurtSound = game.add.audio('hurtSound');
     superHurtSound = game.add.audio('superHurtSound');
     warpUpSound = game.add.audio('warpUpSound');
+    laserSound = game.add.audio('laserSound');
 }
 
 function createInitialAliens() {
@@ -624,7 +628,8 @@ function fireBullet() {
             //  And fire it
             bullet.reset(player.x, player.y + 8);
             bullet.body.velocity.y = -400 * warpspeedAdjustment;
-            bulletTime = game.time.now + 200 / warpspeedAdjustment;
+            bulletTime = game.time.now + 30 + 175 / warpspeedAdjustment;
+            laserSound.play();
         }
     }
 
