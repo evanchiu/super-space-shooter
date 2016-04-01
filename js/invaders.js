@@ -185,19 +185,18 @@ function createAlien(x, y) {
     alien.checkWorldBounds = true;
     alien.outOfBoundsKill = true;
 
-    var xVibrate = 20 - Math.random() * 20;
-    var yVibrate = 20 - Math.random() * 20;
-    game.add.tween(wrappedAlien).to( { x: coordToRelativeString(xVibrate), y: coordToRelativeString(yVibrate) }, 10, Phaser.Easing.Back.None, true, 20, 1, true).loop();
+    game.add.tween(wrappedAlien).to( { x: relativeVibrate(20), y: relativeVibrate(20) }, 10, Phaser.Easing.Back.None, true, 20, 1, true).loop();
     
     alienTimer = game.time.now + 200;
 }
 
-function coordToRelativeString(coord) {
-    if (coord >= 0) {
-        return "+" + coord;
-    } else {
-        return "-" + coord;
-    }
+function relativeVibrate(vibrateRange) {
+    var coord = (vibrateRange / 2) - (Math.random() * vibrateRange);
+
+    var relVibrateString = (coord >= 0 ? "+" : "") + coord;
+    console.log(relVibrateString);
+
+    return relVibrateString;
 }
 
 // Loads dots from query params.
