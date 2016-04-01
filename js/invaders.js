@@ -244,6 +244,7 @@ function update() {
         // If the player has reached the tap target, stop, otherwise move there
         if (tapTarget == null || Phaser.Rectangle.contains(player.body, tapTarget.x, tapTarget.y)) {
             player.body.velocity.setTo(0, 0);
+            tapTarget = null;
         } else {
             game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400);
         }
