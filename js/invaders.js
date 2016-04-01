@@ -13,19 +13,17 @@ var game = new Phaser.Game(screenwidth, screenheight, Phaser.AUTO, 'phaser-examp
 
 function preload() {
 
-    game.load.image('shoe', 'img/shoe.png');
-    game.load.spritesheet('bullet', 'img/arrow-double-16px.png', 8, 35);
-    game.load.image('enemyBullet', 'assets/enemy-bullet.png');
-    //game.load.spritesheet('invader', 'assets/invader32x32x4.png', 32, 32);
-    game.load.image('invader', 'img/bluedot.png', 32, 32);
-    game.load.image('ship', 'img/arrowhead-32px.png');
-    game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-    game.load.image('starfield', 'img/spaceclouds.png');
+    game.load.spritesheet('kaboom',        'assets/explode.png', 128, 128);
+    game.load.image('fire1',               'assets/fire1.png');
+    game.load.image('fire2',               'assets/fire2.png');
+    game.load.image('fire3',               'assets/fire3.png');
 
-    game.load.image('fire1', 'assets/fire1.png');
-    game.load.image('fire2', 'assets/fire2.png');
-    game.load.image('fire3', 'assets/fire3.png');
-	
+    game.load.spritesheet('bullet',        'img/arrow-double-16px.png', 8, 35);
+    game.load.image('ship',                'img/arrowhead-32px.png');
+    game.load.image('shoe',                'img/shoe.png');
+    game.load.image('invader',             'img/bluedot.png', 32, 32);
+    game.load.image('starfield',           'img/spaceclouds.png');
+
     highscore = localStorage.getItem("highscore");
     if (highscore == null) {
 	    highscore = 0;
