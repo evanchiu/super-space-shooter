@@ -21,12 +21,13 @@ function preload() {
     game.load.image('ship',                'assets/arrowhead-32px.png');
     game.load.image('shoe',                'assets/shoe.png');
     game.load.image('invader',             'assets/bluedot.png', 32, 32);
-    game.load.image('starfield',           'assets/spaceclouds.png');
+    game.load.image('starfield',           'assets/spaceclouds_medium.png');
 
     game.load.audio('explosionSound',      'assets/LessAbrasiveExplosion4.wav');
     game.load.audio('bigExplosionSound',   'assets/BigExplosion5.wav');
     game.load.audio('hurtSound',           'assets/Hit_Hurt2.wav');
     game.load.audio('superHurtSound',      'assets/Super_Hit_Hurt.wav');
+    game.load.audio('warpUpSound',         'assets/Warp_Up.wav');
 
     highscore = localStorage.getItem("highscore");
     if (highscore == null || resetHighscore) {
@@ -66,10 +67,9 @@ var alienGroupCreateTimer;
 var alienStartX = 0;
 var alienStartY = 0;
 
-var WARPSPEED_INCREMENT = 0.4;
+var WARPSPEED_INCREMENT = 0.6;
 var WARP_LEVEL_MAX = 10;
-var WARP_TIMER_INCREMENT = 10000;
-//var WARP_TIMER_INCREMENT = 1000;
+var WARP_TIMER_INCREMENT = 15000;
 var warpspeedAdjustment = 1;
 var warpString;
 var warpLevel = 1;
@@ -80,6 +80,7 @@ var explosionSound;
 var bigExplosionSound;
 var hurtSound;
 var superHurtSound;
+var warpUpSound;
 
 function create() {
 
@@ -177,6 +178,7 @@ function create() {
     bigExplosionSound = game.add.audio('bigExplosionSound');
     hurtSound = game.add.audio('hurtSound');
     superHurtSound = game.add.audio('superHurtSound');
+    warpUpSound = game.add.audio('warpUpSound');
 }
 
 function createInitialAliens() {
@@ -184,8 +186,8 @@ function createInitialAliens() {
 
     // Use default space invaders pattern if we can't pull from URL
     if (!coordinates || coordinates.length <= 0) {
-        var numCols = 8;
-        var numRows = 6;
+        var numCols = 4;
+        var numRows = 3;
         for (var y = 0; y < numRows; y++) {
             for (var x = 0; x < numCols; x++) {
                 coordinates.push([(x / numCols) * screenwidth, (y / numRows) * screenheight]);
@@ -216,8 +218,9 @@ function createRandomVelAlien(x, y) {
 
 function createAlienGroup(x, y, xVel, yVel, spriteName) {
     var groupSprite = alienGroups.create(x, y, spriteName);
+    groupSprite.baseVelocity = [xVel, yVel];
     groupSprite.anchor.setTo(0.5, 0.5);
-    groupSprite.body.velocity.setTo(xVel, yVel * warpspeedAdjustment);
+    groupSprite.body.velocity.setTo(xVel, groupSprite.baseVelocity[1] * warpspeedAdjustment);
     groupSprite.body.moves = true;
     groupSprite.checkWorldBounds = true;
     groupSprite.outOfBoundsKill = true;
@@ -329,7 +332,7 @@ function update() {
             player.body.velocity.setTo(0, 0);
             tapTarget = null;
         } else {
-            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400 * warpspeedAdjustment);
+            game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, Math.min(750, 500 * warpspeedAdjustment));
         }
 
         // Exhaust comes out the bottom of the ship
@@ -457,6 +460,12 @@ function updateWarp() {
             warpText.text = warpString + warpLevel;
             warpTimer = game.time.now + WARP_TIMER_INCREMENT;
         }
+
+        alienGroups.forEach(function(alienGroup) {
+            alienGroup.body.velocity.setTo(alienGroup.baseVelocity[0], alienGroup.baseVelocity[1] * warpspeedAdjustment);
+        });
+
+        warpUpSound.play();
     }
 }
 
@@ -600,14 +609,13 @@ function enemyFires () {
         // And fire the bullet from this enemy
         enemyBullet.reset(shooter.body.x, shooter.body.y);
 
-        game.physics.arcade.moveToObject(enemyBullet,player,120 * warpspeedAdjustment);
+        game.physics.arcade.moveToObject(enemyBullet,player, 120 * warpspeedAdjustment);
         firingTimer = game.time.now + 2000 / warpspeedAdjustment;
     }
 
 }
 
 function fireBullet() {
-
     //  To avoid them being allowed to fire too fast we set a time limit
     if (game.time.now > bulletTime) {
         //  Grab the first bullet we can from the pool
