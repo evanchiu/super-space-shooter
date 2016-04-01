@@ -66,7 +66,7 @@ var alienGroupCreateTimer;
 var alienStartX = 0;
 var alienStartY = 0;
 
-var WARPSPEED_INCREMENT = 0.1;
+var WARPSPEED_INCREMENT = 0.4;
 var WARP_LEVEL_MAX = 10;
 var WARP_TIMER_INCREMENT = 10000;
 var warpspeedAdjustment = 1;
