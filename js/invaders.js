@@ -23,8 +23,8 @@ function preload() {
     game.load.image('invader',             'img/bluedot.png', 32, 32);
     game.load.image('starfield',           'img/spaceclouds.png');
 
-    game.load.audio('explosionSound', 'assets/Explosion4.wav');
-    game.load.audio('bigExplosionSound', 'assets/BigExplosion5.wav');
+    game.load.audio('explosionSound',      'assets/LessAbrasiveExplosion4.wav');
+    game.load.audio('bigExplosionSound',   'assets/BigExplosion5.wav');
 	
     highscore = localStorage.getItem("highscore");
     if (highscore == null || resetHighscore) {
