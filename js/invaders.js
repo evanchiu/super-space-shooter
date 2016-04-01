@@ -83,7 +83,7 @@ function create() {
     enemyBullets.setAll('checkWorldBounds', true);
 
     //  The hero!
-    player = game.add.sprite(400, 500, 'ship');
+    player = game.add.sprite(screenwidth/2, screenheight-50, 'ship');
     player.anchor.setTo(0.5, 0.5);
     game.physics.enable(player, Phaser.Physics.ARCADE);
 
