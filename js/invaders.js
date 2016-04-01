@@ -212,7 +212,7 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
     }
 
 
-    alienGroupCreateTimer = game.time.now + 20000 + Math.random() * 2000;
+    alienGroupCreateTimer = game.time.now + 15000 + Math.random() * 2000;
 }
 
 function createAlien(x, y, xVel, yVel) {
@@ -353,8 +353,8 @@ function update() {
     }
 
     if (game.time.now > alienGroupCreateTimer) {
-        var margin = 300;
-        createAlienGroup(margin + Math.random() * (screenwidth - margin), -100, 0, 50, 'shoe');
+        var margin = 200;
+        createAlienGroup(margin + Math.random() * (screenwidth - 2 * margin), -100, 0, 50, 'shoe');
         console.log("Creating alien group");
     }
 
