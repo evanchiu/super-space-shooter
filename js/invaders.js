@@ -315,50 +315,56 @@ function update() {
             // enemyFires();
         }
 
-        aliens.children.forEach(function(wrappedAlien) {
-            wrappedAlien.children.forEach(function(rawAlien) {
+        game.physics.arcade.overlap(enemyBullets, player, handlePlayerHitByBullet, null, this);
+    }
+
+    aliens.children.forEach(function(wrappedAlien) {
+        wrappedAlien.children.forEach(function(rawAlien) {
+            if (player.alive) {
                 // Run collision against random aliens
                 game.physics.arcade.overlap(bullets, rawAlien, handleBulletHitsAlien, null, this);
                 game.physics.arcade.overlap(player, rawAlien, handlePlayerHitByBullet, null, this);
-
-                // Make the alien blink around
-                teleBlink(rawAlien, wrappedAlien, 20, 20, 100);
-            });
-        });
-
-        alienGroups.children.forEach(function(alienGroup) {
-            // Untint from being hit
-            if (game.time.now > alienGroup.tintTimer) {
-                alienGroup.tint = 0xffffff;
             }
 
-            alienGroup.children.forEach(function(wrappedAlien) {
-                wrappedAlien.children.forEach(function(rawAlien) {
+            // Make the alien blink around
+            teleBlink(rawAlien, wrappedAlien, 20, 20, 100);
+        });
+    });
+
+    alienGroups.children.forEach(function(alienGroup) {
+        // Untint from being hit
+        if (game.time.now > alienGroup.tintTimer) {
+            alienGroup.tint = 0xffffff;
+        }
+
+        alienGroup.children.forEach(function(wrappedAlien) {
+            wrappedAlien.children.forEach(function(rawAlien) {
+                if (player.alive) {
                     // Run collision against alien groups
                     game.physics.arcade.overlap(bullets, rawAlien, handleBulletHitsAlien, null, this);
                     game.physics.arcade.overlap(player, rawAlien, handlePlayerHitByBullet, null, this);
+                }
 
-                    // Make the alien blink around
-                    teleBlink(rawAlien, wrappedAlien, 20, 20, 400);
-                });
+                // Make the alien blink around
+                teleBlink(rawAlien, wrappedAlien, 20, 20, 400);
             });
-            // Find if there are any alive children; if not, kill the group
-            var hasLivingChildren = false;
-            alienGroup.children.forEach(function(wrappedAlien) {
-                wrappedAlien.children.forEach(function(rawAlien) {
-                    if (rawAlien.alive) {
-                        hasLivingChildren = true;
-                    }
-                });
-            });
-            if (!hasLivingChildren) {
-                handleAlienGroupDead(alienGroup);
-            }
         });
 
+        // Find if there are any alive children; if not, kill the group
+        var hasLivingChildren = false;
+        alienGroup.children.forEach(function(wrappedAlien) {
+            wrappedAlien.children.forEach(function(rawAlien) {
+                if (rawAlien.alive) {
+                    hasLivingChildren = true;
+                }
+            });
+        });
+        if (!hasLivingChildren) {
+            handleAlienGroupDead(alienGroup);
+        }
+    });
 
-        game.physics.arcade.overlap(enemyBullets, player, handlePlayerHitByBullet, null, this);
-    }
+
 
     // Spawn aliens randomly at the top of the screen
     if (game.time.now > alienCreateTimer) {
