@@ -564,7 +564,7 @@ function handlePlayerHitByObject(player, obj) {
         if (newHighscore) {
             stateText.text="    GAME OVER \nNew HIGHSCORE!";
         } else {
-            stateText.text=" GAME OVER " ;
+            stateText.text="   GAME OVER \nTap to play again!" ;
         }
         stateText.visible = true;
 
