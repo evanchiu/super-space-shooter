@@ -192,7 +192,8 @@ function createInitialAliens() {
     console.log("Initial coords: " + coordsStr);
 
     coordinates.map(function(coordinate) {
-        createRandomVelAlien(coordinate[0], coordinate[1]);
+        // Multiply y-coordinate to avoid spawning enemies near the bottom of the screen initially
+        createRandomVelAlien(coordinate[0], coordinate[1] / 3);
     });
 
     aliens.x = alienStartX;
