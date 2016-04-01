@@ -17,7 +17,7 @@ function preload() {
     highscore = localStorage.getItem("highscore");
     if (highscore == null) {
 	    highscore = 0;
-	    localStorate.setItem("highscore", highscore); 
+	    localStorage.setItem("highscore", highscore); 
 	}
 }
 
