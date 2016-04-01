@@ -7,4 +7,5 @@ Just run this in the super-space-shooter directory, then browse to http://localh
     python -m SimpleHTTPServer
 
 ## See the latest on S3
-http://a9vsgamedevhack.s3-website-us-west-1.amazonaws.com/super-space-shooter/index.html
+* [direct](http://a9vsgamedevhack.s3-website-us-west-1.amazonaws.com/super-space-shooter/index.html)
+* [In Harness](http://a9vsgamedevhack.s3-website-us-west-1.amazonaws.com/)
