@@ -54,7 +54,7 @@ var stateText;
 var livingEnemies = [];
 var tapTarget;
 
-var alienTimer;
+var alienCreateTimer;
 var speedAdjustment = 1;
 var alienStartX = 100;
 var alienStartY = 50;
@@ -184,17 +184,17 @@ function createAlien(x, y) {
     alien.body.moves = true;
     alien.checkWorldBounds = true;
     alien.outOfBoundsKill = true;
+    alien.blinkTimer = game.time.now;
 
     game.add.tween(wrappedAlien).to( { x: relativeVibrate(20), y: relativeVibrate(20) }, 10, Phaser.Easing.Back.None, true, 20, 1, true).loop();
     
-    alienTimer = game.time.now + 200;
+    alienCreateTimer = game.time.now + 200;
 }
 
 function relativeVibrate(vibrateRange) {
     var coord = (vibrateRange / 2) - (Math.random() * vibrateRange);
 
     var relVibrateString = (coord >= 0 ? "+" : "") + coord;
-    console.log(relVibrateString);
 
     return relVibrateString;
 }
@@ -254,11 +254,6 @@ function update() {
     //  Scroll the background
     starfield.tilePosition.y += 2;
 
-    // Spawn aliens randomly at the top of the screen
-    if (game.time.now > alienTimer) {
-        createAlien(Math.random() * 10, -1);
-    }
-
     if (player.alive) {
         // If pointer is down, register tap target and fire bullet
         if (game.input.activePointer.isDown) {
@@ -292,6 +287,22 @@ function update() {
         game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
     }
 
+    // Spawn aliens randomly at the top of the screen
+    if (game.time.now > alienCreateTimer) {
+        createAlien(Math.random() * 10, -1);
+    }
+
+    // Blink all aliens on random intervals
+    aliens.children.forEach(function(wrappedAlien) {
+        wrappedAlien.children.forEach(function(rawAlien) {
+            if (game.time.now > rawAlien.blinkTimer && rawAlien.alpha > 0.0) {
+                rawAlien.alpha = 0.0;
+            } else if (game.time.now > rawAlien.blinkTimer + 500 * Math.random()) {
+                rawAlien.alpha = 1.0;
+                rawAlien.blinkTimer = game.time.now + Math.random() * 500;
+            }
+        });
+    });
 }
 
 function render() {
