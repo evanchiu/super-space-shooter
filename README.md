@@ -13,7 +13,6 @@ Just run this in the super-space-shooter directory, then browse to http://localh
     python -m SimpleHTTPServer
 
 ## Remaining Goals/Assignments
-* Alpha-transparent space clouds - Evan
 * Rotation - Out of scope
 * Basic Sound Effects - Joseph
 * Fix Spawn - Kevin
