@@ -20,6 +20,10 @@ function preload() {
     game.load.image('ship', 'img/arrowhead-32px.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
     game.load.image('starfield', 'img/clouds.png');
+
+    game.load.image('fire1', 'assets/fire1.png');
+    game.load.image('fire2', 'assets/fire2.png');
+    game.load.image('fire3', 'assets/fire3.png');
 	
     highscore = localStorage.getItem("highscore");
     if (highscore == null) {
@@ -29,6 +33,7 @@ function preload() {
 }
 
 var player;
+var exhaust;
 var aliens;
 var bullets;
 var bulletTime = 0;
@@ -90,6 +95,14 @@ function create() {
     player = game.add.sprite(screenwidth/2, screenheight-50, 'ship');
     player.anchor.setTo(0.5, 0.5);
     game.physics.enable(player, Phaser.Physics.ARCADE);
+    exhaust = game.add.emitter(player.x, player.y+15, 500);
+    exhaust.makeParticles(['fire1', 'fire2', 'fire3']);
+    exhaust.gravity = 100;
+    exhaust.setAlpha(1, 0, 2000);
+    exhaust.setScale(0.4, 0, 0.4, 0, 2000);
+    exhaust.start(false, 2000, 20);
+    exhaust.setXSpeed(-100, 100);
+    exhaust.setYSpeed(100, 200);
 
     //  The baddies!
     aliens = game.add.group();
@@ -249,6 +262,10 @@ function update() {
             game.physics.arcade.moveToXY(player, tapTarget.x, tapTarget.y, 400);
         }
 
+        // Exhaust comes out the bottom of the ship
+        exhaust.emitX = player.x;
+        exhaust.emitY = player.y+25;
+
         if (game.time.now > firingTimer) {
             enemyFires();
         }
@@ -319,6 +336,7 @@ function enemyHitsPlayer(player,bullet) {
     // When the player dies
     if (lives.countLiving() < 1) {
         player.kill();
+        exhaust.kill();
         enemyBullets.callAll('kill');
 
         stateText.text=" GAME OVER \n Click to restart";
@@ -386,6 +404,7 @@ function restart() {
     player.revive();
     player.position = new Phaser.Point(screenwidth/2, screenheight-50);
     tapTarget = null;
+    exhaust.start(false, 2000, 20);
 
     //  And brings the aliens back from the dead :)
     aliens.callAll('kill');

@@ -14,9 +14,6 @@ Just run this in the super-space-shooter directory, then browse to http://localh
 
 ## Remaining Goals/Assignments
 * Alpha-transparent space clouds - Evan
-* Make the spaceship the amazon arrow - Evan
-  * Ship is the arrowhead
-  * Particle trail coming out behind it
 * Rotation - Out of scope
 * Basic Sound Effects - Joseph
 * Fix Spawn - Kevin
