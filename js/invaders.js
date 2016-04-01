@@ -13,11 +13,11 @@ var game = new Phaser.Game(screenwidth, screenheight, Phaser.AUTO, 'phaser-examp
 
 function preload() {
 
-    game.load.image('bullet', 'assets/bullet.png');
+    game.load.spritesheet('bullet', 'img/arrow-double-16px.png', 8, 35);
     game.load.image('enemyBullet', 'assets/enemy-bullet.png');
     //game.load.spritesheet('invader', 'assets/invader32x32x4.png', 32, 32);
     game.load.image('invader', 'img/bluedot.png', 32, 32);
-    game.load.image('ship', 'assets/player.png');
+    game.load.image('ship', 'img/arrowhead-32px.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
     game.load.image('starfield', 'img/clouds.png');
 	
@@ -71,6 +71,11 @@ function create() {
     bullets.setAll('anchor.y', 1);
     bullets.setAll('outOfBoundsKill', true);
     bullets.setAll('checkWorldBounds', true);
+    bullets.forEach(function(bullet) {
+      bullet.animations.add('bullet');
+      // The bullets look "interesting" when animated
+      //bullet.play('bullet', 6, true);
+    }, this);
 
     // The enemy's bullets
     enemyBullets = game.add.group();
