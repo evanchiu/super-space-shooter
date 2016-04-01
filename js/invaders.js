@@ -189,7 +189,6 @@ function createInitialAliens() {
 
 function createRandomVelAlien(x, y) {
     var wrappedAlien = createAlien(x, y, (Math.random() * 140) - 70, 150 + (Math.random() * 140) - 70);
-    console.log(x, y);
     aliens.add(wrappedAlien);
 }
 
@@ -210,7 +209,7 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
     }, this);
     var gOffsetX = 0;
     var gOffsetY = 50;
-    groupSprite.body.setSize(400, 120, gOffsetX, gOffsetY);
+    groupSprite.body.setSize(330, 100, gOffsetX, gOffsetY);
 
     var gW = groupSprite.body.width;
     var gH = groupSprite.body.height;
@@ -219,6 +218,7 @@ function createAlienGroup(x, y, xVel, yVel, spriteName) {
         var wrappedAlien = createAlien(Math.random() * gW - gW / 2 + gOffsetX, Math.random() * gH - gH / 2 + gOffsetY, 0, 0);
         wrappedAlien.children.forEach(function(rawAlien) {
             rawAlien.outOfBoundsKill = false;
+            rawAlien.parentGroup = groupSprite;
         });
         groupSprite.addChild(wrappedAlien);
     }
@@ -315,20 +315,31 @@ function update() {
             // enemyFires();
         }
 
-        // Run collision against random aliens
         aliens.children.forEach(function(wrappedAlien) {
             wrappedAlien.children.forEach(function(rawAlien) {
+                // Run collision against random aliens
                 game.physics.arcade.overlap(bullets, rawAlien, handleBulletHitsAlien, null, this);
                 game.physics.arcade.overlap(player, rawAlien, handlePlayerHitByBullet, null, this);
+
+                // Make the alien blink around
+                teleBlink(rawAlien, wrappedAlien, 20, 20, 100);
             });
         });
 
-        // Run collision against alien groups
         alienGroups.children.forEach(function(alienGroup) {
+            // Untint from being hit
+            if (game.time.now > alienGroup.tintTimer) {
+                alienGroup.tint = 0xffffff;
+            }
+
             alienGroup.children.forEach(function(wrappedAlien) {
                 wrappedAlien.children.forEach(function(rawAlien) {
+                    // Run collision against alien groups
                     game.physics.arcade.overlap(bullets, rawAlien, handleBulletHitsAlien, null, this);
                     game.physics.arcade.overlap(player, rawAlien, handlePlayerHitByBullet, null, this);
+
+                    // Make the alien blink around
+                    teleBlink(rawAlien, wrappedAlien, 20, 20, 400);
                 });
             });
             // Find if there are any alive children; if not, kill the group
@@ -358,36 +369,18 @@ function update() {
     if (game.time.now > alienGroupCreateTimer) {
         var margin = 200;
         createAlienGroup(margin + Math.random() * (screenwidth - 2 * margin), -100, 0, 50, 'shoe');
-        alienGroupCreateTimer = game.time.now + 15000 + Math.random() * 2000;
+        alienGroupCreateTimer = game.time.now + 16000 + Math.random() * 1000;
     }
-
-    // Teleport around random aliens
-    aliens.children.forEach(function(wrappedAlien) {
-        // Blink and teleport around aliens on random intervals
-        wrappedAlien.children.forEach(function(rawAlien) {
-            teleBlink(rawAlien, wrappedAlien, 20, 20);
-        });
-    });
-
-    alienGroups.children.forEach(function(alienGroup) {
-        alienGroup.children.forEach(function(wrappedAlien) {
-            wrappedAlien.children.forEach(function(rawAlien) {
-                var gW = alienGroup.width;
-                var gH = alienGroup.height;
-                teleBlink(rawAlien, wrappedAlien, 20, 20);
-            });
-        });
-    });
 }
 
-function teleBlink(rawAlien, wrappedAlien, xRadius, yRadius) {
+function teleBlink(rawAlien, wrappedAlien, xRadius, yRadius, blinkTime) {
     if (game.time.now > rawAlien.blinkTimer && rawAlien.alpha > 0.0) {
         rawAlien.alpha = 0.0;
         wrappedAlien.x = xRadius - Math.random() * xRadius * 2;
         wrappedAlien.y = yRadius - Math.random() * yRadius * 2;
-    } else if (game.time.now > rawAlien.blinkTimer + 200 * Math.random()) {
+    } else if (game.time.now > rawAlien.blinkTimer + blinkTime * Math.random()) {
         rawAlien.alpha = 1.0;
-        rawAlien.blinkTimer = game.time.now + Math.random() * 200;
+        rawAlien.blinkTimer = game.time.now + Math.random() * blinkTime;
     }
 }
 
@@ -432,8 +425,15 @@ function resetScore () {
 	localStorage.setItem("highscore", highscore );
 }
 
-function handleBulletHitsAlien(bullet, alien) {
-    //  When a bullet hits an alien we kill them both
+function handleBulletHitsAlien(alien, bullet) {
+    // If the alien is part of a group, do something to its parent
+    if (alien.parentGroup) {
+        console.log("Hit alien that was part of group");
+        alien.parentGroup.tint = 0xff00000;
+        alien.parentGroup.tintTimer = game.time.now + 30;
+    }
+
+    // When a bullet hits an alien we kill them both
     bullet.kill();
     alien.kill();
 
