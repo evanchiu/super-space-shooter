@@ -17,20 +17,20 @@ function preload() {
     game.load.image('fire2',               'assets/fire2.png');
     game.load.image('fire3',               'assets/fire3.png');
 
-    game.load.spritesheet('bullet',        'img/arrow-double-16px.png', 8, 35);
-    game.load.image('ship',                'img/arrowhead-32px.png');
-    game.load.image('shoe',                'img/shoe.png');
-    game.load.image('invader',             'img/bluedot.png', 32, 32);
-    game.load.image('starfield',           'img/spaceclouds.png');
+    game.load.spritesheet('bullet',        'assets/arrow-double-16px.png', 8, 35);
+    game.load.image('ship',                'assets/arrowhead-32px.png');
+    game.load.image('shoe',                'assets/shoe.png');
+    game.load.image('invader',             'assets/bluedot.png', 32, 32);
+    game.load.image('starfield',           'assets/spaceclouds.png');
 
     game.load.audio('explosionSound',      'assets/LessAbrasiveExplosion4.wav');
     game.load.audio('bigExplosionSound',   'assets/BigExplosion5.wav');
-	
+
     highscore = localStorage.getItem("highscore");
     if (highscore == null || resetHighscore) {
-	    highscore = 0;
-	    localStorage.setItem("highscore", highscore); 
-	}
+        highscore = 0;
+        localStorage.setItem("highscore", highscore);
+    }
 }
 
 var resetHighscore = false;
@@ -93,9 +93,9 @@ function create() {
     bullets.setAll('outOfBoundsKill', true);
     bullets.setAll('checkWorldBounds', true);
     bullets.forEach(function(bullet) {
-      bullet.animations.add('bullet');
-      // The bullets look "interesting" when animated
-      //bullet.play('bullet', 6, true);
+        bullet.animations.add('bullet');
+        // The bullets look "interesting" when animated
+        //bullet.play('bullet', 6, true);
     }, this);
 
     // The enemy's bullets
@@ -131,20 +131,20 @@ function create() {
     alienGroups.enableBody = true;
     alienGroups.physicsBodyType = Phaser.Physics.ARCADE;
 
-	// Highscore
-	highscoreString = 'Highscore : ';
+    // Highscore
+    highscoreString = 'Highscore : ';
     highscoreText = game.add.text(10, 10, highscoreString + highscore, { font: '16px Arial', fill: '#fff' });
 
-    //  The score	
+    //  The score
     scoreString = 'Score : ';
     scoreText = game.add.text(10, 28, scoreString + score, { font: '16px Arial', fill: '#fff' });
 
     //  Warp Level
-	warpString = 'Warp Lvl : ';
+    warpString = 'Warp Lvl : ';
     warpText = game.add.text(10, 46, warpString + warpLevel, { font: '16px Arial', fill: '#fff' });
-	
-	// Lives (worth keeping around for easy shield implementation)
-	lives = game.add.group();
+
+    // Lives (worth keeping around for easy shield implementation)
+    lives = game.add.group();
 
     // Game state text (game over, etc.)
     stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '24px Arial', fill: '#fff', boundsAlignH: "center", boundsAlignV: "middle"});
@@ -435,40 +435,40 @@ function render() {
 
 function updateWarp() {
     if ((lives.countLiving() > 0) && (warpLevel < WARP_LEVEL_MAX) && (game.time.now > warpTimer)) {
-		increaseScore(1000);
-	    warpLevel += 1;
-		warpspeedAdjustment += WARPSPEED_INCREMENT;
-		if (warpLevel >= WARP_LEVEL_MAX) {
-		    warpText.text = warpString + 'MAX';
-		} else {
-		    warpText.text = warpString + warpLevel;
-		    warpTimer = game.time.now + WARP_TIMER_INCREMENT;
-		}
-	}
+        increaseScore(1000);
+        warpLevel += 1;
+        warpspeedAdjustment += WARPSPEED_INCREMENT;
+        if (warpLevel >= WARP_LEVEL_MAX) {
+            warpText.text = warpString + 'MAX';
+        } else {
+            warpText.text = warpString + warpLevel;
+            warpTimer = game.time.now + WARP_TIMER_INCREMENT;
+        }
+    }
 }
 
 function resetWarp() {
-	warpTimer = game.time.now + WARP_TIMER_INCREMENT;
+    warpTimer = game.time.now + WARP_TIMER_INCREMENT;
     warpLevel = 1;
-	warpspeedAdjustment = 1;
-	warpText.text = warpString + warpLevel;
+    warpspeedAdjustment = 1;
+    warpText.text = warpString + warpLevel;
 }
 
 function increaseScore(value) {
     score += value * warpLevel;
-	scoreText.text = scoreString + score;
-	if (score > highscore) {
-	    newHighscore = true;
-	    highscore = score;
-		highscoreText.text = highscoreString + highscore;
-	}
+    scoreText.text = scoreString + score;
+    if (score > highscore) {
+        newHighscore = true;
+        highscore = score;
+        highscoreText.text = highscoreString + highscore;
+    }
 }
 
 function resetScore () {
     score = 0;
-	scoreText.text = scoreString + score;
-	newHighscore = false;
-	localStorage.setItem("highscore", highscore );
+    scoreText.text = scoreString + score;
+    newHighscore = false;
+    localStorage.setItem("highscore", highscore);
 }
 
 function handleBulletHitsAlien(alien, bullet) {
@@ -525,7 +525,7 @@ function handleAlienGroupDead(alienGroup) {
 }
 
 function handlePlayerHitByBullet(player, bullet) {
-    
+
     bullet.kill();
 
     live = lives.getFirstAlive();
@@ -544,12 +544,12 @@ function handlePlayerHitByBullet(player, bullet) {
         player.kill();
         exhaust.kill();
         enemyBullets.callAll('kill');
-        
-		if (newHighscore) {
+
+        if (newHighscore) {
             stateText.text="    GAME OVER \nNew HIGHSCORE!";
-		} else {
+        } else {
             stateText.text=" GAME OVER " ;
-		}
+        }
         stateText.visible = true;
 
         //the "click to restart" handler
@@ -574,7 +574,7 @@ function enemyFires () {
 
 
     if (enemyBullet && livingEnemies.length > 0) {
-        
+
         var random = game.rnd.integerInRange(0,livingEnemies.length-1);
 
         // randomly select one of them
@@ -608,7 +608,7 @@ function fireBullet() {
 function restart() {
 
     //  A new level starts
-    
+
     //resets the life count
     lives.callAll('revive');
 
@@ -625,8 +625,8 @@ function restart() {
 
     //hides the text
     stateText.visible = false;
-	
-	resetScore();
-	resetWarp();
+
+    resetScore();
+    resetWarp();
 
 }
