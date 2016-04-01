@@ -19,7 +19,7 @@ function preload() {
     game.load.image('invader', 'img/bluedot.png', 32, 32);
     game.load.image('ship', 'img/arrowhead-32px.png');
     game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-    game.load.image('starfield', 'img/spaceglitter.png');
+    game.load.image('starfield', 'img/spaceblobs.png');
 
     game.load.image('fire1', 'assets/fire1.png');
     game.load.image('fire2', 'assets/fire2.png');
