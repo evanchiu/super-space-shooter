@@ -90,6 +90,7 @@ function create() {
     aliens = game.add.group();
     aliens.enableBody = true;
     aliens.physicsBodyType = Phaser.Physics.ARCADE;
+    aliens.createMultiple(300, 'invader');
     createInitialAliens();
 
 	// Highscore
@@ -141,21 +142,29 @@ function createInitialAliens() {
     }
 
     coordinates.map(function(coordinate) {
-        var x = coordinate[0];
-        var y = coordinate[1];
-
-        var alien = aliens.create(x * 48, y * 50, 'invader');
-        alien.anchor.setTo(0.5, 0.5);
-        alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
-        alien.play('fly');
-        alien.body.velocity.setTo((Math.random() * 150) - 75, 150 + (Math.random() * 150) - 75);
-        alien.body.moves = true;
-        alien.checkWorldBounds = true;
-        alien.outOfBoundsKill = true;
+        createAlien(coordinate[0], coordinate[1]);
     });
 
     aliens.x = alienStartX;
     aliens.y = alienStartY;
+}
+
+function createAlien(x, y) {
+    var alien = aliens.getFirstExists(false);
+    if (!alien) {
+        console.log("Hit alien limit: couldn't spawn any more");
+        return;
+    } else {
+        console.log("Spawning alien");
+    }
+    alien.reset(x * 48, y * 50);
+    alien.anchor.setTo(0.5, 0.5);
+    alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
+    alien.play('fly');
+    alien.body.velocity.setTo((Math.random() * 150) - 75, 150 + (Math.random() * 150) - 75);
+    alien.body.moves = true;
+    alien.checkWorldBounds = true;
+    alien.outOfBoundsKill = true;
 }
 
 // Loads dots from query params.
