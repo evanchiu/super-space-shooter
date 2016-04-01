@@ -210,8 +210,8 @@ function update() {
     starfield.tilePosition.y += 2;
 
     if (player.alive) {
-        // If mouse is down, register tap target and fire bullet
-        if (game.input.mousePointer.isDown) {
+        // If pointer is down, register tap target and fire bullet
+        if (game.input.activePointer.isDown) {
             tapTargetX = game.input.x;
             tapTargetY = game.input.y;
             fireBullet();

@@ -1,5 +1,5 @@
 # super-space-shooter
-A super space shooting game where you dodge and destroy asteroids
+A super space shooting game where you dodge and destroy asteroids, developed at a JavaScript GameJam.
 
 ## Run it locally
 Just run this in the super-space-shooter directory, then browse to http://localhost:8000
