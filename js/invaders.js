@@ -106,9 +106,6 @@ function create() {
 
     //  The baddies!
     aliens = game.add.group();
-    aliens.enableBody = true;
-    aliens.physicsBodyType = Phaser.Physics.ARCADE;
-    aliens.createMultiple(100, 'invader');
     createInitialAliens();
 
 	// Highscore
@@ -168,14 +165,18 @@ function createInitialAliens() {
 }
 
 function createAlien(x, y) {
-    var alien = aliens.getFirstExists(false);
+    var wrappedAlien = game.add.group();
+    wrappedAlien.enableBody = true;
+    wrappedAlien.physicsBodyType = Phaser.Physics.ARCADE;
+    aliens.add(wrappedAlien);
+
+    var alien = wrappedAlien.create(x * 48, y * 50, 'invader');
     if (!alien) {
         console.log("Hit alien limit: couldn't spawn any more");
         return;
     } else {
         console.log("Spawning alien");
     }
-    alien.reset(x * 48, y * 50);
     alien.anchor.setTo(0.5, 0.5);
     alien.animations.add('fly', [ 0, 1, 2, 3 ], 20, true);
     alien.play('fly');
@@ -183,8 +184,20 @@ function createAlien(x, y) {
     alien.body.moves = true;
     alien.checkWorldBounds = true;
     alien.outOfBoundsKill = true;
+
+    var xVibrate = 20 - Math.random() * 20;
+    var yVibrate = 20 - Math.random() * 20;
+    game.add.tween(wrappedAlien).to( { x: coordToRelativeString(xVibrate), y: coordToRelativeString(yVibrate) }, 10, Phaser.Easing.Back.None, true, 20, 1, true).loop();
     
     alienTimer = game.time.now + 200;
+}
+
+function coordToRelativeString(coord) {
+    if (coord >= 0) {
+        return "+" + coord;
+    } else {
+        return "-" + coord;
+    }
 }
 
 // Loads dots from query params.
@@ -271,9 +284,13 @@ function update() {
         }
 
         //  Run collision
-        game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this);
+        aliens.children.forEach(function(wrappedAlien) {
+            wrappedAlien.children.forEach(function(rawAlien) {
+                game.physics.arcade.overlap(bullets, rawAlien, collisionHandler, null, this);
+                game.physics.arcade.overlap(player, rawAlien, enemyHitsPlayer, null, this);
+            });
+        });
         game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
-        game.physics.arcade.overlap(aliens, player, enemyHitsPlayer, null, this);
     }
 
 }
@@ -303,7 +320,6 @@ function resetScore () {
 }
 
 function collisionHandler (bullet, alien) {
-
     //  When a bullet hits an alien we kill them both
     bullet.kill();
     alien.kill();
@@ -318,7 +334,7 @@ function collisionHandler (bullet, alien) {
 
 }
 
-function enemyHitsPlayer(player,bullet) {
+function enemyHitsPlayer(player, bullet) {
     
     bullet.kill();
 
@@ -353,11 +369,13 @@ function enemyFires () {
     //  Grab the first bullet we can from the pool
     enemyBullet = enemyBullets.getFirstExists(false);
 
-    livingEnemies.length=0;
+    livingEnemies.length = 0;
 
-    aliens.forEachAlive(function(alien){
+    aliens.forEachAlive(function(wrappedAlien){
         // put every living enemy in an array
-        livingEnemies.push(alien);
+        wrappedAlien.children.forEach(function(child) {
+            livingEnemies.push(child);
+        });
     });
 
 
@@ -407,7 +425,7 @@ function restart() {
     exhaust.start(false, 2000, 20);
 
     //  And brings the aliens back from the dead :)
-    aliens.callAll('kill');
+    aliens.removeAll();
     createInitialAliens();
 
     //hides the text
