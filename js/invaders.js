@@ -131,10 +131,10 @@ function createAliens() {
     aliens.y = 50;
 
     //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-    var tween = game.add.tween(aliens).to( { x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+    var tween = game.add.tween(aliens).to( { x: 200 }, 500, Phaser.Easing.Linear.None, true, 0, 1, true).loop();
 
-    //  When the tween loops it calls descend
-    tween.onLoop.add(descend, this);
+    //  When the tween loops it calls descendAliens
+    tween.onLoop.add(descendAliens, this);
 }
 
 // Loads dots from query params.
@@ -189,10 +189,8 @@ function setupInvader(invader) {
 
 }
 
-function descend() {
-
-    aliens.y += 10;
-
+function descendAliens() {
+    aliens.y += 20;
 }
 
 function update() {
@@ -265,7 +263,7 @@ function collisionHandler (bullet, alien) {
 
 }
 
-function enemyHitsPlayer (player,bullet) {
+function enemyHitsPlayer(player,bullet) {
     
     bullet.kill();
 
